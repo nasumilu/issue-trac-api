@@ -21,12 +21,10 @@ public class GeometryDeserializer extends JsonDeserializer<Geometry> {
 
         var factory = new GeometryFactory(new PrecisionModel(), srid);
 
-        switch(type) {
-            case Geometry.TYPENAME_POINT -> {
-                return factory.createPoint(this.deserializePointCoordinates(node, deserializationContext));
-            }
-            case default -> throw new RuntimeException(String.format("Unable to deserialize geometry type %s!", type));
+        if (Geometry.TYPENAME_POINT.equals(type)) {
+            return factory.createPoint(this.deserializePointCoordinates(node, deserializationContext));
         }
+        throw new RuntimeException(String.format("Unable to deserialize geometry type %s!", type));
 
     }
 

@@ -15,9 +15,10 @@ public class GeometrySerializer extends JsonSerializer<Geometry> {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeObjectField("type", geometry.getGeometryType());
         jsonGenerator.writeFieldName("coordinates");
-        switch(geometry) {
-            case Point p -> this.serializePointCoordinates(p, jsonGenerator);
-            case LineString l -> this.serializeLineStringCoordinates(l, jsonGenerator);
+        switch (geometry.getGeometryType()) {
+            case Geometry.TYPENAME_POINT -> this.serializePointCoordinates((Point) geometry, jsonGenerator);
+            case Geometry.TYPENAME_LINESTRING ->
+                    this.serializeLineStringCoordinates((LineString) geometry, jsonGenerator);
             default -> throw new RuntimeException(String.format("Unable to serialize %s", geometry.getClass()));
         }
         jsonGenerator.writeObjectField("srid", geometry.getSRID());
