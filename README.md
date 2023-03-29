@@ -13,12 +13,16 @@ These are screenshots take of the Jetbrains (IntelliJ IDEA) HTTP Client demonstr
 ### GET (Category)
 
 ![GET Categories](docs/images/get-category.png)
+Get a list of categories, supports pagination
 
 ![POST Category](docs/images/post-category.png)
+Add a category
 
 ![PATCH Category](docs/images/patch-category.png)
+Update a category
 
 ![DELETE Category](docs/images/delete-category.png)
+Delete a category
 
 ## Class Diagram
 
