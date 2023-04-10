@@ -11,8 +11,12 @@ import static org.junit.Assert.*;
 
 public class IssueTest {
 
-    @Autowired
-    IssueRepository repository;
+    @Test
+    public void testGetSetDisposition() {
+        var issue = new Issue();
+        assertEquals(Issue.Disposition.NEW, issue.getDisposition());
+        assertSame(Issue.Disposition.COMPLETED, issue.setDisposition(Issue.Disposition.COMPLETED).getDisposition());
+    }
 
     @Test
     public void testGetSetDescription() {
