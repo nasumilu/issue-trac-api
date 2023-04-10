@@ -16,4 +16,16 @@ public interface CommentRepository extends CrudRepository<Comment, Long>,  Pagin
     @RestResource(path = "by-issue")
     List<Comment> findCommentsByIssue(Issue issue, Pageable page);
 
+    @Override
+    @RestResource(exported = false)
+    void delete(Comment comment);
+
+    @Override
+    @RestResource(exported = false)
+    void deleteAll();
+
+    @Override
+    @RestResource(exported = false)
+    void deleteById(Long id);
+
 }
