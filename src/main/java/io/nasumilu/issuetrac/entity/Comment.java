@@ -1,31 +1,25 @@
 package io.nasumilu.issuetrac.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "issue_comment")
-public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class Comment extends AbstractSubjectable {
+
 
     @ManyToOne(targetEntity = Issue.class, cascade = CascadeType.PERSIST, optional = false)
     @JoinColumn(name = "issue", nullable = false)
     private Issue issue;
 
     @Lob
-    @Column(name = "comment")
-    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
+    @Column(name = "comment", columnDefinition = "text")
     private String value;
 
     public String getValue() {
         return this.value;
     }
 
-    public Comment setComment(String value) {
+    public Comment setValue(String value) {
         this.value = value;
         return this;
     }
@@ -37,14 +31,6 @@ public class Comment {
     public Comment setIssue(Issue issue) {
         this.issue = issue;
         return this;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
 }

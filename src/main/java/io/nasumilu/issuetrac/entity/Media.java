@@ -1,61 +1,61 @@
 package io.nasumilu.issuetrac.entity;
 
 import jakarta.persistence.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Entity
-@Table(name = "media")
-public class Media {
+@Table(name = "issue_media")
+public class Media extends AbstractSubjectable {
 
-    public enum Mime {
-        IMAGE_JPEG("image/jpeg"),
-        IMAGE_PNG("image/png"),
-        IMAGE_WEBP("image/webp");
-
-        private final String VALUE;
-        Mime(String value) {
-            this.VALUE = value;
-        }
-
-        public String getValue() {
-            return this.VALUE;
-        }
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "mime", nullable = false)
-    private Mime mime;
+    @Column(name = "mime_type", nullable = false)
+    private String mime;
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JoinColumn(name = "issue", nullable = false)
     private Issue issue;
 
-    public Mime getMime() {
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "image", nullable = false)
+    private byte[] value;
+
+    public byte[] getValue() {
+        return value;
+    }
+
+    public Media setValue(byte[] value) {
+        this.value = value;
+        return this;
+    }
+
+    public Media setValue(String path) throws IOException, IllegalArgumentException {
+        return this.setValue(Paths.get(path));
+    }
+
+    public Media setValue(Path path) throws IOException, IllegalArgumentException {
+        var mime = Files.probeContentType(path);
+        this.setMimeType(mime);
+        return this.setValue(Files.readAllBytes(path));
+    }
+
+    public String getMimeType() {
         return mime;
     }
 
-    public void setMime(Mime mime) {
+    public Media setMimeType(String mime) {
         this.mime = mime;
+        return this;
     }
 
     public Issue getIssue() {
         return issue;
     }
 
-    public void setIssue(Issue issue) {
+    public Media setIssue(Issue issue) {
         this.issue = issue;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return this;
     }
 
 }

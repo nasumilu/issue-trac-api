@@ -14,11 +14,7 @@ import org.locationtech.jts.geom.Point;
 @Entity
 @Table(name = "issue")
 @JsonPropertyOrder({ "id", "title", "description", "shape" })
-public class Issue {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class Issue extends AbstractSubjectable {
 
     @Lob
     @Column(name = "description")
@@ -37,6 +33,18 @@ public class Issue {
     @Column(name = "title", nullable = false, length = 64)
     private String title;
 
+    @Column(name = "geoid", nullable = false, length = 16)
+    private String geoid;
+
+    public String getGeoid() {
+        return geoid;
+    }
+
+    public Issue setGeoid(String geoid) {
+        this.geoid = geoid;
+        return this;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -50,16 +58,18 @@ public class Issue {
         return shape;
     }
 
-    public void setShape(Point shape) {
+    public Issue setShape(Point shape) {
         this.shape = shape;
+        return this;
     }
 
     public Category getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public Issue setCategory(Category category) {
         this.category = category;
+        return this;
     }
 
     public String getTitle() {
@@ -69,14 +79,6 @@ public class Issue {
     public Issue setTitle(String title) {
         this.title = title;
         return this;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
 }

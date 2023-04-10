@@ -29,8 +29,9 @@ public class Category implements GeoidAware {
         return name;
     }
 
-    public void setName(String name) {
+    public Category setName(String name) {
         this.name = name;
+        return this;
     }
 
     public Category setId(Long id) {
@@ -46,20 +47,18 @@ public class Category implements GeoidAware {
         return description;
     }
 
-    public void setDescription(String description) {
+    public Category setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean hasParent() {
-        return null != this.parent;
+        return this;
     }
 
     public Optional<Category> getParent() {
         return Optional.ofNullable(parent);
     }
 
-    public void setParent(Category category) {
+    public Category setParent(Category category) {
         this.parent = category;
+        return this;
     }
 
     public Category setGeoid(String geoid) {
