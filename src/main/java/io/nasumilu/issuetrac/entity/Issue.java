@@ -16,6 +16,15 @@ import org.locationtech.jts.geom.Point;
 @JsonPropertyOrder({ "id", "title", "description", "shape" })
 public class Issue extends AbstractSubjectable {
 
+    public enum Disposition {
+        NEW,
+        RECEIVED,
+        REVIEWING,
+        ASSIGNED,
+        COMPLETED,
+        CLOSED
+    }
+
     @Lob
     @Column(name = "description")
     @JdbcTypeCode(SqlTypes.LONGVARCHAR)
@@ -35,6 +44,19 @@ public class Issue extends AbstractSubjectable {
 
     @Column(name = "geoid", nullable = false, length = 16)
     private String geoid;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "disposition", nullable = false, length = 16)
+    private Disposition disposition = Disposition.NEW;
+
+    public Disposition getDisposition() {
+        return disposition;
+    }
+
+    public Issue setDisposition(Disposition disposition) {
+        this.disposition = disposition;
+        return this;
+    }
 
     public String getGeoid() {
         return geoid;
