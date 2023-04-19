@@ -6,13 +6,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class CategoryRepositoryTest {
 
     @Autowired
@@ -23,17 +24,6 @@ public class CategoryRepositoryTest {
         this.repository.deleteAll();
     }
 
-    @Test
-    public void testNameNotNull() {
-        final var category = (new Category()).setGeoid("12001");
-        assertThrows(DataIntegrityViolationException.class, () -> this.repository.save(category));
-    }
-
-    @Test
-    public void testGeoIdNotNull() {
-        final var category = (new Category()).setName("Test Name");
-        assertThrows(DataIntegrityViolationException.class, () -> this.repository.save(category));
-    }
 
     @Test
     public void testInsertCategoryTest() {

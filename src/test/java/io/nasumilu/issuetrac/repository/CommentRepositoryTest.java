@@ -1,6 +1,8 @@
 package io.nasumilu.issuetrac.repository;
 
 import io.nasumilu.issuetrac.entity.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,8 +13,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class CommentRepositoryTest {
 
 
@@ -38,8 +40,12 @@ public class CommentRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @After
     public void cleanUp() {
+        this.entityManager.createNativeQuery("delete from issue_disposition_history").executeUpdate();
         this.repository.deleteAll();
         this.issueRepository.deleteAll();
         this.categoryRepository.deleteAll();
@@ -48,10 +54,6 @@ public class CommentRepositoryTest {
     @Test
     public void testInserIssueComment() {
         var sub = UUID.randomUUID();
-        String path = Objects.requireNonNull(
-                MediaTest.class.getClassLoader().getResource("media.png")
-        ).getPath();
-
         var issue = (Issue) (new Issue()).setTitle("Issue Title")
                 .setDescription("Test Issue Description")
                 .setGeoid("12001")

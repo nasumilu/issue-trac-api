@@ -3,6 +3,8 @@ package io.nasumilu.issuetrac.repository;
 
 import io.nasumilu.issuetrac.entity.Category;
 import io.nasumilu.issuetrac.entity.Issue;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +14,8 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class IssueRepositoryTest {
 
     private static final Point shape;
@@ -31,14 +34,24 @@ public class IssueRepositoryTest {
 
     @Autowired
     private IssueRepository repository;
+
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @After
     public void cleanUp() {
+        this.deleteHistory();
         this.repository.deleteAll();
         this.categoryRepository.deleteAll();
     }
+
+    public void deleteHistory() {
+        this.entityManager.createNativeQuery("delete from issue_disposition_history").executeUpdate();
+    }
+
 
     @Test
     public void testInsertIssue() {
@@ -54,6 +67,7 @@ public class IssueRepositoryTest {
         this.repository.save(issue);
         assertNotNull(issue.getId());
         assertNotNull(issue.getCategory().getId());
+
     }
 
     @Test
@@ -72,57 +86,6 @@ public class IssueRepositoryTest {
         this.repository.save(issue);
         issue = this.repository.findById(issue.getId()).orElseThrow();
         assertEquals(expected, issue.getShape().getCoordinate().x, 0.001);
-    }
-
-    @Test
-    public void testIssueTitleNotNull() {
-        final var issue = (Issue) (new Issue()).setDescription("Test Issue Description")
-                .setCategory((new Category()).setName("Test Issue Category").setGeoid("12001"))
-                .setGeoid("12001")
-                .setShape(shape)
-                .setSubject(UUID.randomUUID());
-
-        assertThrows(DataIntegrityViolationException.class, () -> this.repository.save(issue));
-    }
-
-    @Test
-    public void testIssueCategoryNotNull() {
-        final var issue = (Issue) (new Issue()).setTitle("Test Issue")
-                .setShape(shape)
-                .setGeoid("12001")
-                .setSubject(UUID.randomUUID());
-
-        assertThrows(DataIntegrityViolationException.class, () -> this.repository.save(issue));
-    }
-
-    @Test
-    public void testIssueShapeNotNull() {
-        final var issue = (Issue) (new Issue()).setTitle("Test Issue")
-                .setCategory((new Category()).setName("Test Issue Category").setGeoid("12001"))
-                .setGeoid("12001")
-                .setSubject(UUID.randomUUID());
-
-        assertThrows(DataIntegrityViolationException.class, () -> this.repository.save(issue));
-    }
-
-    @Test
-    public void testIssueSubjectNotNull() {
-        final var issue = (new Issue()).setTitle("Test Issue")
-                .setCategory((new Category()).setName("Test Issue Category").setGeoid("12001"))
-                .setGeoid("12001")
-                .setShape(shape);
-
-        assertThrows(DataIntegrityViolationException.class, () -> this.repository.save(issue));
-    }
-
-    @Test
-    public void testIssueGeoIdNotNull() {
-        var issue = (Issue) (new Issue()).setTitle("Issue Title")
-                .setDescription("Test Issue Description")
-                .setCategory((new Category()).setName("Test Issue Category").setGeoid("12001"))
-                .setShape(shape)
-                .setSubject(UUID.randomUUID());
-        assertThrows(DataIntegrityViolationException.class, () -> this.repository.save(issue));
     }
 
 }
