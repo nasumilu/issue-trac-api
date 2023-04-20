@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.List;
 
 @RepositoryRestResource
-@CrossOrigin(origins = {"http://localhost:8080", "https://nasumilu.io"})
+@CrossOrigin(origins = {"https://localhost:4200", "https://nasumilu.io"})
 public interface MediaRepository extends CrudRepository<Media, Long>, PagingAndSortingRepository<Media, Long> {
 
     @RestResource(path = "by-issue")
